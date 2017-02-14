@@ -94,7 +94,7 @@ class ConversationReader(object):
 			for word in ConversationReader.string_to_tokens(sentence)]
 		counter = Counter(words)
 		# vocab_size - 3 because we add PAD, UKN and EOS
-		most_common_tokens = counter.most_common(voc_size - 2)
+		most_common_tokens = counter.most_common(voc_size - 3)
 		most_common_tokens = [item[0] for item in most_common_tokens]
 		most_common_tokens.insert(0,constants.EOS)
 		most_common_tokens.insert(0,constants.PAD)
@@ -229,14 +229,14 @@ class ConversationReader(object):
 		""" Pad list of indices and classifies them by bucket. """
 		X_by_buckets = {}
 		Y_by_buckets = {}
-		pad_idx = self.vocabulary.token_to_index(constants.PAD)
+		pad_idx = self.vocabulary.get_pad_index()
 		print("\nPadding...")
 		assert len(X) == len(Y)
 		num_examples = len(X)
 		for i in range(num_examples):
 			x = X[i]
 			y = Y[i]
-			bucket = ConversationReader.pad_indices(buckets,x,y,pad_idx)
+			bucket = ConversationReader.pad_x_and_y(buckets, x, y, pad_idx)
 			if bucket is not None:
 				if str(bucket) not in X_by_buckets.keys():
 					X_by_buckets[str(bucket)] = []
