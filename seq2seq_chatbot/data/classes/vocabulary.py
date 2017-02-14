@@ -20,6 +20,9 @@ class Vocabulary(object):
 		self.index_to_token_dict = dict((index, token)
 			for token, index in self.token_to_index_dict.iteritems())
 
+	def get_voc_size(self):
+		return len(self.token_to_index_dict.keys())
+
 	def token_to_index(self,token):
 		if token in self.token_to_index_dict.keys():
 			return self.token_to_index_dict[token]
@@ -67,6 +70,9 @@ class Vocabulary(object):
 
 	def get_ukn_index(self):
 		return self.token_to_index_dict[constants.UKN]
+
+	def get_pad_index(self):
+		return self.token_to_index_dict[constants.PAD]
 
 	def save_as_json(self,json_path):
 		io.save_object_as_json(self.token_to_index_dict, json_path)
