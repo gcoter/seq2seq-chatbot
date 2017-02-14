@@ -64,7 +64,61 @@ preprocess_parser.add_argument(
 	help="")
 preprocess_parser.add_argument(
 	"--max",
-	default=-1,type=int,
+	default=-1,
+	type=int,
+	required=False,
+	help="")
+
+# *****************
+# *** Chat Task ***
+# *****************
+def chat(args):
+	import tensorflow as tf
+	import os.path
+
+	from seq2seq_chatbot.chatbot import Chatbot
+
+	if os.path.isfile(args.config_path):
+		chatbot = Chatbot(config_path=args.config_path)
+	else:
+		print("Configuration file not found at",args.config_path)
+		print("Define a Chatbot with default values")
+		chatbot = Chatbot(
+			buckets=constants.BUCKETS,
+			vocabulary_path=constants.DEFAULT_VOC_PATH,
+			embedding_size=constants.EMBEDDING_SIZE,
+			num_hidden=constants.NUM_HIDDEN,
+			num_rnns=constants.NUM_RNNS,
+			parameters_path=None)
+	with tf.Session() as session:
+		# Restore parameters if necessary
+		chatbot.restore_parameters(session)
+		# Start conversation
+		print("\n*** CONVERSATION ***")
+		print("Enter <STOP> to stop the conversation\n")
+		while(True):
+			sentence = raw_input("ME: ")
+			if sentence == "<STOP>":
+				break
+			else:
+				answer = chatbot.answer(
+					session,
+					sentence,
+					temperature=args.temperature)
+				print("BOT:",answer)
+
+chat_parser = subparsers.add_parser("chat",
+	help="Chat with the user.")
+chat_parser.add_argument(
+	"--config_path",
+	default=constants.DEFAULT_CONFIG_FILE_PATH,
+	type=str,
+	required=False,
+	help="")
+chat_parser.add_argument(
+	"--temperature",
+	default=1.0,
+	type=float,
 	required=False,
 	help="")
 
@@ -82,3 +136,5 @@ print()
 command = args.command
 if command == "preprocess":
 	preprocess(args)
+elif command == "chat":
+	chat(args)
