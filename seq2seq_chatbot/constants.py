@@ -1,4 +1,4 @@
-""" This module defines some constants (used as default values).
+""" Define some constants (used as default values).
 
 It also helps to define the filesystem required for the whole program to work.
 Here is a small tree representation:
@@ -46,7 +46,6 @@ DEFAULT_PARAMETERS_FOLDER = DEFAULT_CONFIG_FOLDER + 'parameters/'
 DEFAULT_PARAMETERS_PATH = DEFAULT_PARAMETERS_FOLDER + 'parameters.ckpt'
 
 # Special Tokens
-GO = u"<go>"
 EOS = u"<eos>"
 PAD = u"<pad>"
 UKN = u"<ukn>"
