@@ -56,6 +56,20 @@ class ConversationReader(object):
 			print("Bucket not found to fit (",len(x),",",len(y),")")
 		return right_bucket
 
+	@staticmethod
+	def pad_indices(indices,new_size,pad_idx):
+		indices.extend((new_size-len(indices))*[pad_idx])
+
+	@staticmethod
+	def pad_x_and_y(buckets,x,y,pad_idx):
+		bucket = ConversationReader.get_right_bucket(buckets,x,y)
+		if bucket is not None:
+			size_x = bucket[0]
+			size_y = bucket[1]
+			ConversationReader.pad_indices(x, size_x, pad_idx)
+			ConversationReader.pad_indices(y, size_y, pad_idx)
+		return bucket
+
 	def __init__(self,movie_lines_path,movie_conversations_path):
 		self.movie_lines_path = movie_lines_path
 		self.movie_conversations_path = movie_conversations_path
@@ -80,7 +94,7 @@ class ConversationReader(object):
 			for word in ConversationReader.string_to_tokens(sentence)]
 		counter = Counter(words)
 		# vocab_size - 3 because we add PAD, UKN and EOS
-		most_common_tokens = counter.most_common(voc_size - 3)
+		most_common_tokens = counter.most_common(voc_size - 2)
 		most_common_tokens = [item[0] for item in most_common_tokens]
 		most_common_tokens.insert(0,constants.EOS)
 		most_common_tokens.insert(0,constants.PAD)
@@ -222,12 +236,8 @@ class ConversationReader(object):
 		for i in range(num_examples):
 			x = X[i]
 			y = Y[i]
-			bucket = self.get_right_bucket(buckets,x,y)
+			bucket = ConversationReader.pad_indices(buckets,x,y,pad_idx)
 			if bucket is not None:
-				size_x = bucket[0]
-				size_y = bucket[1]
-				x.extend((size_x-len(x))*[pad_idx])
-				y.extend((size_y-len(y))*[pad_idx])
 				if str(bucket) not in X_by_buckets.keys():
 					X_by_buckets[str(bucket)] = []
 					Y_by_buckets[str(bucket)] = []
