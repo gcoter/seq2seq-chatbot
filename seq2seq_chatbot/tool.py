@@ -69,6 +69,108 @@ preprocess_parser.add_argument(
 	required=False,
 	help="")
 
+# ******************
+# *** Train Task ***
+# ******************
+def train(args):
+	from seq2seq_chatbot.chatbot import Chatbot
+	from seq2seq_chatbot.data.classes.dataset import Dataset
+
+	dataset = Dataset.load_from_folder(args.dataset_folder)
+	vocabulary_path = Dataset.get_voc_path(args.dataset_folder)
+	chatbot = Chatbot(
+		buckets=constants.BUCKETS,
+		vocabulary_path=vocabulary_path,
+		embedding_size=args.embedding_size,
+		num_hidden=args.num_hidden,
+		num_rnns=args.num_rnns,
+		config_folder=args.config_folder)
+	chatbot.train(
+		dataset=dataset,
+		num_epochs=args.num_epochs,
+		batch_size=args.batch_size,
+		eval_step=args.eval_step,
+		keep_prob=args.keep_prob,
+		learning_rate=args.learning_rate,
+		config_folder=args.config_folder,
+		test_proportion=args.test_proportion,
+		restore=args.restore)
+
+train_parser = subparsers.add_parser("train",
+	help="Train a Chatbot.")
+train_parser.add_argument(
+	"--dataset_folder",
+	default=constants.DEFAULT_DATASET,
+	type=str,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--embedding_size",
+	default=constants.EMBEDDING_SIZE,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--num_hidden",
+	default=constants.NUM_HIDDEN,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--num_rnns",
+	default=constants.NUM_RNNS,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--config_folder",
+	default=constants.DEFAULT_CONFIG_FOLDER,
+	type=str,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--num_epochs",
+	default=constants.NUM_EPOCHS,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--batch_size",
+	default=constants.BATCH_SIZE,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--eval_step",
+	default=constants.EVAL_STEP,
+	type=int,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--keep_prob",
+	default=constants.KEEP_PROB,
+	type=float,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--learning_rate",
+	default=constants.LEARNING_RATE,
+	type=float,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--test_proportion",
+	default=constants.TEST_PROPORTION,
+	type=float,
+	required=False,
+	help="")
+train_parser.add_argument(
+	"--restore",
+	action='store_true',
+	default=False,
+	required=False,
+	help="")
+
 # *****************
 # *** Chat Task ***
 # *****************
@@ -78,21 +180,21 @@ def chat(args):
 
 	from seq2seq_chatbot.chatbot import Chatbot
 
-	if os.path.isfile(args.config_path):
-		chatbot = Chatbot(config_path=args.config_path)
+	if os.path.isfile(Chatbot.get_config_path(args.config_folder)):
+		chatbot = Chatbot(config_folder=args.config_folder)
 	else:
-		print("Configuration file not found at",args.config_path)
+		print("Configuration file not found in",args.config_folder)
 		print("Define a Chatbot with default values")
 		chatbot = Chatbot(
+			config_folder=constants.DEFAULT_CONFIG_FOLDER,
 			buckets=constants.BUCKETS,
 			vocabulary_path=constants.DEFAULT_VOC_PATH,
 			embedding_size=constants.EMBEDDING_SIZE,
 			num_hidden=constants.NUM_HIDDEN,
-			num_rnns=constants.NUM_RNNS,
-			parameters_path=None)
+			num_rnns=constants.NUM_RNNS)
 	with tf.Session() as session:
 		# Restore parameters if necessary
-		chatbot.restore_parameters(session)
+		chatbot.restore_parameters_from_config_folder(session, args.config_folder)
 		# Start conversation
 		print("\n*** CONVERSATION ***")
 		print("Enter <STOP> to stop the conversation\n")
@@ -110,8 +212,8 @@ def chat(args):
 chat_parser = subparsers.add_parser("chat",
 	help="Chat with the user.")
 chat_parser.add_argument(
-	"--config_path",
-	default=constants.DEFAULT_CONFIG_FILE_PATH,
+	"--config_folder",
+	default=constants.DEFAULT_CONFIG_FOLDER,
 	type=str,
 	required=False,
 	help="")
@@ -136,5 +238,9 @@ print()
 command = args.command
 if command == "preprocess":
 	preprocess(args)
+elif command == "train":
+	train(args)
 elif command == "chat":
 	chat(args)
+else:
+	print("Command",command,"not recognized")
