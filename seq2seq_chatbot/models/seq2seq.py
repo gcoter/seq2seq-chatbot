@@ -152,10 +152,11 @@ class BasicSeq2Seq(Seq2Seq):
 	def initialize_parameters(self,session):
 		session.run(self.init)
 
-	def train_step(self,session,batch_X,batch_Y,keep_prob):
-		return session.run(self.train_step, feed_dict={
+	def train_step(self,session,batch_X,batch_Y,learning_rate,keep_prob):
+		return session.run(self.optimize, feed_dict={
 			self.X_: batch_X,
 			self.Y_: batch_Y,
+			self.learning_rate: learning_rate,
 			self.keep_prob: keep_prob})
 
 	def get_loss(self,session,X,Y,keep_prob):
@@ -165,10 +166,16 @@ class BasicSeq2Seq(Seq2Seq):
 			self.keep_prob: keep_prob})
 
 	def get_train_loss(self,session,X,Y,keep_prob):
-		return self.get_loss(session, X, Y, keep_prob=1.0)
+		return self.get_loss(session, X, Y, keep_prob=keep_prob)
 
 	def get_test_loss(self,session,X,Y):
 		return self.get_loss(session, X, Y, keep_prob=1.0)
+
+	def train_and_get_loss(self,session,batch_X,batch_Y,keep_prob):
+		return session.run([self.train_step,self.loss], feed_dict={
+			self.X_: batch_X,
+			self.Y_: batch_Y,
+			self.keep_prob: keep_prob})
 
 	def get_probabilities(self,session,X):
 		# Input must have shape (batch_size,input_seq_length)
