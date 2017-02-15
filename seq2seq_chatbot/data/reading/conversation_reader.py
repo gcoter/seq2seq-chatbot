@@ -33,6 +33,9 @@ class ConversationReader(object):
 				unicode(string_or_list.strip(), errors='ignore'))
 			for sub_sentence in sub_sentences:
 				words = nltk.word_tokenize(sub_sentence)
+				# Each word is converted to lowercase
+				for i in range(len(words)):
+					words[i] = words[i].lower()
 				tokens.extend(words)
 				tokens.append(constants.EOS)
 		elif isinstance(string_or_list, (list, tuple)):
@@ -89,7 +92,8 @@ class ConversationReader(object):
 	def create_vocabulary(self,voc_size):
 		sentences = self.movie_lines_df['Sentence']
 		print("Creating vocabulary...")
-		words = [word
+		# Note: Each word is converted to lowercase
+		words = [word.lower()
 			for sentence in sentences
 			for word in ConversationReader.string_to_tokens(sentence)]
 		counter = Counter(words)

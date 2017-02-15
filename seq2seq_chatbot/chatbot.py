@@ -152,6 +152,7 @@ class Chatbot(object):
 		return self.answer_from_indices(session, indices, temperature=temperature)
 
 	def answer(self,session,sentence,temperature=1.0):
+		sentence = sentence.lower()
 		tokens = ConversationReader.string_to_tokens(sentence)
 		return self.answer_from_tokens(session, tokens, temperature=temperature)
 
