@@ -67,6 +67,11 @@ class Vocabulary(object):
 					string += "<" + str(ukn_counter) + " ukn> "
 					ukn_counter = 0
 			string += token + " "
+		return string
+
+	def indices_to_string(self,indices):
+		tokens = self.indices_to_tokens(indices)
+		return self.tokens_to_string(tokens)
 
 	def get_ukn_index(self):
 		return self.token_to_index_dict[constants.UKN]
