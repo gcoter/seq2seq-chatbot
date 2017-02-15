@@ -45,11 +45,14 @@ class Vocabulary(object):
 
 	def tokens_to_string(self,tokens):
 		string = ""
+		"""
 		eos_counter = 0
 		pad_counter = 0
 		ukn_counter = 0
+		"""
 		for i in range(len(tokens)):
 			token = tokens[i]
+			"""
 			if token == constants.EOS:
 				eos_counter += 1
 			elif token == constants.PAD:
@@ -66,6 +69,7 @@ class Vocabulary(object):
 				if ukn_counter > 0:
 					string += "<" + str(ukn_counter) + " ukn> "
 					ukn_counter = 0
+			"""
 			string += token + " "
 		return string
 
