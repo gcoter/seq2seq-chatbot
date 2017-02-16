@@ -20,7 +20,9 @@ class ConversationReader(object):
 
 	@staticmethod
 	def read_text_file(file_path,names):
-		return pd.read_csv(file_path,delimiter=' \+\+\+\$\+\+\+ ',
+		return pd.read_csv(
+			file_path,
+			delimiter=' \+\+\+\$\+\+\+ ',
 			names=names,
 			header=None,
 			engine='python')
@@ -97,10 +99,9 @@ class ConversationReader(object):
 			for sentence in sentences
 			for word in ConversationReader.string_to_tokens(sentence)]
 		counter = Counter(words)
-		# vocab_size - 3 because we add PAD, UKN and EOS
-		most_common_tokens = counter.most_common(voc_size - 3)
+		# (voc_size - 2) because we add PAD and UKN
+		most_common_tokens = counter.most_common(voc_size - 2)
 		most_common_tokens = [item[0] for item in most_common_tokens]
-		most_common_tokens.insert(0,constants.EOS)
 		most_common_tokens.insert(0,constants.PAD)
 		most_common_tokens.insert(0,constants.UKN)
 		print(len(most_common_tokens),"different tokens")

@@ -21,7 +21,7 @@ class Vocabulary(object):
 			for token, index in self.token_to_index_dict.iteritems())
 
 	def get_voc_size(self):
-		return len(self.token_to_index_dict.keys())
+		return len(self.token_to_index_dict)
 
 	def token_to_index(self,token):
 		if token in self.token_to_index_dict.keys():
