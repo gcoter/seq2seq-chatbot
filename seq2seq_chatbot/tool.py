@@ -84,7 +84,8 @@ def train(args):
 		embedding_size=args.embedding_size,
 		num_hidden=args.num_hidden,
 		num_rnns=args.num_rnns,
-		config_folder=args.config_folder)
+		config_folder=args.config_folder,
+		restore_config=args.restore)
 	chatbot.train(
 		dataset=dataset,
 		num_epochs=args.num_epochs,
@@ -94,7 +95,7 @@ def train(args):
 		learning_rate=args.learning_rate,
 		config_folder=args.config_folder,
 		test_proportion=args.test_proportion,
-		restore=args.restore)
+		restore_parameters=args.restore)
 
 train_parser = subparsers.add_parser("train",
 	help="Train a Chatbot.")

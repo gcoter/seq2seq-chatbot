@@ -46,9 +46,10 @@ class Chatbot(object):
 				 vocabulary_path=None,
 				 embedding_size=None,
 				 num_hidden=None,
-				 num_rnns=None):
+				 num_rnns=None,
+				 restore_config=False):
 		config_path = Chatbot.get_config_path(config_folder)
-		if os.path.isfile(config_path):
+		if restore_config and os.path.isfile(config_path):
 			# config_path is assumed to be the path to a JSON file
 			config_dict = io.load_object_from_json(config_path)
 			self.buckets = config_dict['buckets']
@@ -56,6 +57,7 @@ class Chatbot(object):
 			self.embedding_size = config_dict['embedding_size']
 			self.num_hidden = config_dict['num_hidden']
 			self.num_rnns = config_dict['num_rnns']
+			print("Configuration restored from",config_folder)
 		else:
 			self.buckets = buckets
 			self.vocabulary_path = vocabulary_path
@@ -72,6 +74,7 @@ class Chatbot(object):
 		print("Using the vocabulary from {} ({} tokens)".format(
 			self.vocabulary_path,
 			voc_size))
+		self.print_current_config()
 		# A Generation Model takes batch of size 1 as input.
 		# It is only used to generate answers.
 		# TODO: Replace BasicSeq2Seq with Seq2SeqWithBuckets
@@ -99,6 +102,11 @@ class Chatbot(object):
 			'num_hidden': self.num_hidden,
 			'num_rnns': self.num_rnns
 		}
+
+	def print_current_config(self):
+		print("*** Current Configuration ***")
+		print(self.get_config_dict())
+		print()
 
 	def initialize_parameters(self,session):
 		self.generation_model.initialize_parameters(session)
@@ -216,7 +224,7 @@ class Chatbot(object):
 			  keep_prob,
 			  config_folder,
 			  test_proportion=0.0,
-			  restore=False):
+			  restore_parameters=False):
 		# For now, use only one bucket
 		# TODO: Use several buckets
 		input_seq_length = self.generation_model.input_seq_length
@@ -252,7 +260,7 @@ class Chatbot(object):
 
 			# Restore parameters
 			# Otherwise, simply initialize parameters
-			if restore:
+			if restore_parameters:
 				self.restore_parameters_from_config_folder(session, config_folder)
 			else:
 				self.initialize_parameters(session)
