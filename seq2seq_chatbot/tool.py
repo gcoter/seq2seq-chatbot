@@ -182,7 +182,7 @@ def chat(args):
 	from seq2seq_chatbot.chatbot import Chatbot
 
 	if os.path.isfile(Chatbot.get_config_path(args.config_folder)):
-		chatbot = Chatbot(config_folder=args.config_folder)
+		chatbot = Chatbot(config_folder=args.config_folder,restore_config=True)
 	else:
 		print("Configuration file not found in",args.config_folder)
 		print("Define a Chatbot with default values")
