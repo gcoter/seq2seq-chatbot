@@ -1,0 +1,5 @@
+md5: d84555e02b1b65fb8a469aacc09a0a51
+outs:
+- cache: true
+  md5: 9c2d162f8136331c4e632d53377a765b
+  path: README.txt

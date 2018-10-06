@@ -1,0 +1,5 @@
+md5: 5ece3e6288f022ed22c05df7fa43499d
+outs:
+- cache: true
+  md5: d99068087e5f217e198f42d973ff4b07
+  path: movie_characters_metadata.txt

@@ -1,0 +1,5 @@
+md5: 60536f1dc99854808602c8ddbb846fe0
+outs:
+- cache: true
+  md5: 5090b93272d88d91681710cb78ae8e2d
+  path: movie_lines.txt
